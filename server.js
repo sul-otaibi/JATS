@@ -8,16 +8,20 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json({}))
 app.use(express.urlencoded({ extended: false }));
 
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
     var options = {
         root: path.join(__dirname, 'public')
     }
     res.sendFile('index.html', options)
 })
 
-app.get('/data', async (req, res) => {
-    const data = await fs.readFileSync('data.json', 'utf8')
-    res.send(data)
+app.get('/data', (req, res) => {
+    fs.readFile('data.json', 'utf8', async (err, data) => {
+        if (err) {
+            await fs.writeFile('./data.json', '{}', 'utf-8', err => res.send('{}'))
+        }
+        else { res.send(data) }
+    })
 })
 
 
@@ -26,9 +30,16 @@ app.post("/data", async (req, res) => {
     res.redirect("/")
 })
 
-app.listen(port, () => {
-    console.log(`app listening on port ${port}`)
+app.delete("/data", async (req, res) => {
+    await fs.readFile('data.json', 'utf-8', async (err, data) => {
+        var loadedData = JSON.parse(data)
+        loadedData[req.body['cname']] = {}
+        loadedData = JSON.stringify(loadedData).replace(`,"${req.body['cname']}":{}`, ``)
+        await fs.writeFile('data.json', loadedData, ()=>{})
+    })
 })
+
+app.listen(port, () => {console.log(`JATS listening on port ${port}`)})
 
 async function parseData(input) {
     eval(`${input['cname'].toLowerCase()} = {
@@ -37,13 +48,13 @@ async function parseData(input) {
         "status":"${input['cstatus']}"
     }`)
     for (let i = 0; i < 4; i++) {
-        if(input['hrname'+i])
-        eval(`${input['cname'].toLowerCase()}.hr["${input['hrname'+i]}"] = ["${input['hrln'+i]}","${input['hrstatus'+i]}"]`)
+        if (input['hrname' + i])
+            eval(`${input['cname'].toLowerCase()}.hr["${input['hrname' + i]}"] = ["${input['hrln' + i]}","${input['hrstatus' + i]}"]`)
     }
-    await updataData(input['cname'].toLowerCase(), `${JSON.stringify(eval(`${input['cname'].toLowerCase()}`))}`)
+    await updateData(input['cname'].toLowerCase(), `${JSON.stringify(eval(`${input['cname'].toLowerCase()}`))}`)
 }
 
-async function updataData(name, data){
+async function updateData(name, data) {
     const file = JSON.parse(await fs.readFileSync('data.json', 'utf8'))
     eval(`file.${name} = ${data}`)
     await fs.writeFileSync('data.json', JSON.stringify(file))

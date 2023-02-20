@@ -7,10 +7,6 @@ var shown = null
 function show(el) {
     if(shown){
         shown.classList.add('hidden')
-        // if (shown == el.querySelector('.details')){
-        //     shown = null
-        //     return
-        // }
     }
     shown = el.querySelector('.hidden')
     shown.classList.remove('hidden')
@@ -95,32 +91,6 @@ function addCompany(input){
 
 }
 
-// function submitForm(){
-//     const formData = {
-//         cln : document.getElementById('cln').innerText,
-//         cstatus: document.getElementById('cstatus').innerText,
-//         hr1: document.getElementById('hr1').innerText,
-//         hrstatus1: document.getElementById('hrstatus1').innerText,
-//         hr2: document.getElementById('hr2').innerText,
-//         hrstatus2: document.getElementById('hrstatus2').innerText,
-//         hr3: document.getElementById('hr3').innerText,
-//         hrstatus3: document.getElementById('hrstatus3').innerText
-//     }
-
-//     console.log(formData)
-//     console.log("cry...")
-
-//     const httpPost = new XMLHttpRequest()
-//     // httpPost.onreadystatechange = () => {
-//     //     if(httpPost.readyState === 4)
-//     //     alert('sent')
-//     // }
-    
-//     httpPost.setRequestHeader("Content-Type", "application/json");
-//     httpPost.open("POST", "/data")
-//     httpPost.send(JSON.stringify(formData))
-// }
-
 function hideModal(){
     const d = document.querySelector('.modal-bg')
     root.removeChild(d)
@@ -159,6 +129,7 @@ async function build(data){
         ${await buildHR(data[key]["hr"])}
     </ul>
     <button id="edit" onclick="editEntry(this.parentElement.parentElement)">edit</button>
+    <button id="del" onclick="delEntry(this.parentElement.parentElement)">delete</button>
 </div>
 </div>`
     }
@@ -175,19 +146,20 @@ function editEntry(el){
     cstatus = el.querySelector('.status').innerText
     cname = el.querySelector('h2').innerText.toLowerCase()
     cname = cname.slice(0, cname.indexOf(cstatus)).trim().toLowerCase()
-    // li = el.querySelectorAll('li')
-    // var i = 1;
-    // li.forEach(element => {
-    //     console.log(element);
-    //     console.log(i);
-    //     i++
-    // });
-
-    // console.log(data);
-    // console.log(cname);
-    console.log(data[cname]);
     addCompany([cname, data[cname]])
-    
+}
+
+function delEntry(el){
+    cstatus = el.querySelector('.status').innerText
+    cname = el.querySelector('h2').innerText.toLowerCase()
+    cname = cname.slice(0, cname.indexOf(cstatus)).trim().toLowerCase()
+    fetch('/data', {
+        method: 'DELETE', 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({cname})
+    }).then(root.removeChild(el))
 }
 
 window.onload = loadData

@@ -165,6 +165,22 @@ label {
     margin-bottom: 1rem;
 }
 
+#del {
+    font-family: 'Courier New', Courier, monospace;
+    font-style: italic;
+    font-size: 1.2rem;
+    font-weight: bolder;
+    text-transform: uppercase;
+    color: white;
+    background-color: red;
+    border: none;
+    border-radius: 2ex;
+    padding: 0.25rem 1rem;
+    margin-top:  1rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
 .hr {
     font-style: italic;
     font-size: 1.2rem;
