@@ -1,3 +1,11 @@
+/* TODO: 
+    1- add animations (fade-in, fade-out, load-fade-in, show-card-enlarge)
+    2- better style form 
+    3- dynamic form (more than 3 personal)
+*/
+
+
+
 const root = document.getElementById('root')
 var data = null
 

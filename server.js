@@ -2,7 +2,7 @@ const express = require('express')
 const path = require('path')
 const fs = require('fs')
 const app = express()
-const port = 65535
+const port = 65534
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json({}))
@@ -35,11 +35,11 @@ app.delete("/data", async (req, res) => {
         var loadedData = JSON.parse(data)
         loadedData[req.body['cname']] = {}
         loadedData = JSON.stringify(loadedData).replace(`,"${req.body['cname']}":{}`, ``)
-        await fs.writeFile('data.json', loadedData, ()=>{})
+        await fs.writeFile('data.json', loadedData, () => { })
     })
 })
 
-app.listen(port, () => {console.log(`JATS listening on port ${port}`)})
+app.listen(port, () => { console.log(`JATS listening on port ${port}`) })
 
 async function parseData(input) {
     eval(`${input['cname'].toLowerCase()} = {
